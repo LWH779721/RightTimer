@@ -1,7 +1,7 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "RightTimer.hpp"
+#include "TimerManage.hpp"
 
 using namespace RightTimer;
 using namespace std;
@@ -25,16 +25,14 @@ int abstime2ts(char *abstime)
 	
 int main(int argc, char **args)
 {
-	RightTimer::TimerManage tm;
+	TimerManage *tm = TimerManage::GetTimerManager();
+	int ts = abstime2ts("2019-5-23 20:14:11");
 	
-	tm.Init();
-	int ts = abstime2ts("2019-3-12 16:39:11");
+	tm->Start();
 	
 	std::cout << ts << std::endl;
 	
-	tm.Run();
-	
-	tm.AddTimer(true, ts, 0, absCallback);
+	tm->AddTimer(true, ts, 0, absCallback);
 	
 	while (1)
 	{

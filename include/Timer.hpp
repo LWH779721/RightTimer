@@ -1,9 +1,5 @@
-#ifndef __RIGHTTIMER_HPP__
-#define __RIGHTTIMER_HPP__
-
-#include <map>
-
-using std::map;
+#ifndef __TIMER_HPP__
+#define __TIMER_HPP__
 
 namespace RightTimer {
 	class Timer;
@@ -25,20 +21,6 @@ namespace RightTimer {
 			bool GetRepeat();
 			~Timer();
 	};
-	
-	class TimerManage {
-		private:
-			static map<int, Timer *> timers;
-			static int epfd;
-			static int _Run();
-		public:
-			TimerManage();
-			int Init();
-			int Run();
-			int AddTimer(bool abs, int delay, int interval, timer_callback cb);
-			static int RemoveTimer(map<int, Timer *>::iterator it);
-			static int Dump();
-	};
 };
-
+	
 #endif
