@@ -16,7 +16,8 @@
 * RightTimer 采用Linux机制 timerfd，在内核中定时，测试精准度好于延时函数
 
 ## 采用技术
-* timerfd 和 epoll
+* timerfd, epoll, STL map
 
 ## 需求
-1. 实现绝对时间定时通知，例如：12:30 通知我
+1. 实现计划任务，例如：12:30 通知我
+2. 实现定时器，例如：每隔10s

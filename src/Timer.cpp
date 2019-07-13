@@ -45,22 +45,20 @@ int Timer::SetUpRelativeTimer(int delay, int interval)
 	int timerfd;
 	
 	timerfd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC | TFD_NONBLOCK);
-	if (timerfd < 0)
-	{
-		std::cout << "timerfd_create error" << std::endl;
+	if (timerfd < 0){
+		perror("timerfd_create failed");
 		return -1;
 	}
-	
+
 	if (delay == 0) delay = interval;
 	
 	new_value.it_value.tv_sec = delay/1000;
-	new_value.it_value.tv_nsec = delay%1000;
+	new_value.it_value.tv_nsec = 0;
 	new_value.it_interval.tv_sec = interval/1000;
 	new_value.it_interval.tv_nsec = interval%1000;
 	
-	if (timerfd_settime(tfd, 0, &new_value, NULL) != 0)
-	{
-		std::cout << "timerfd_settime error" << std::endl;
+	if (timerfd_settime(timerfd, 0, &new_value, NULL) != 0){
+		perror("timerfd_settime failed");
 		close(timerfd);
 		return -1;
 	}	
@@ -68,10 +66,11 @@ int Timer::SetUpRelativeTimer(int delay, int interval)
 	return timerfd;
 }
 
-int Timer::Init(bool abs, int delay, int interval, timer_callback cb)
+int Timer::Init(bool abs, int delay, int interval, timer_callback cb, void *userdata)
 {
 	this->abs = abs;
 	this->cb = cb;
+	this->userdata = userdata;
 	
 	if (this->abs == true)
 	{
@@ -94,7 +93,7 @@ int Timer::Init(bool abs, int delay, int interval, timer_callback cb)
 
 int Timer::RunCallback()
 {
-	this->cb(*this);
+	this->cb(this->userdata);
 	return 0;
 }
 

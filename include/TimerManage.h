@@ -2,8 +2,7 @@
 #define __RIGHTTIMER_HPP__
 
 #include <map>
-
-#include "Timer.hpp"
+#include "Timer.h"
 
 namespace RightTimer {
 
@@ -25,7 +24,7 @@ namespace RightTimer {
 			static TimerManage *GetTimerManager();
 
 			int Start();
-			int AddTimer(bool abs, int delay, int interval, timer_callback cb);
+			int AddTimer(bool abs, int delay, int interval, timer_callback cb, void *userdata);
 			int RemoveTimer(std::map<int, Timer *>::iterator it);
 			int Dump();
 	};

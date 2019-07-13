@@ -42,24 +42,31 @@ int TimerManage::Start()
 	return 0;
 }
 
-int TimerManage::AddTimer(bool abs, int delay, int interval, timer_callback cb)
+int TimerManage::AddTimer(bool abs, int delay, int interval, timer_callback cb, void *userdata)
 {
 	struct epoll_event ev;
+	int tfd = -1;
 	int ret = -1;
 	Timer *t = new Timer;
 	
-	t->Init(abs, delay, interval, cb);
-	std::cout << "AddTimer:" << t->GetFd() << std::endl;
-	ev.data.fd = t->GetFd();
+	ret = t->Init(abs, delay, interval, cb, userdata);
+	if (ret < 0){
+		cout << "err when create timer" << endl;
+		return -1;
+	}
+	
+	tfd = t->GetFd();
+	std::cout << "AddTimer:" << tfd << std::endl;
+	timers.insert(make_pair(tfd, t));
+	
+	ev.data.fd = tfd;
     ev.events = EPOLLIN|EPOLLET;//监听读状态同时设置ET模式
-    ret = epoll_ctl(epfd, EPOLL_CTL_ADD, t->GetFd(), &ev);//注册epoll事件
+    ret = epoll_ctl(epfd, EPOLL_CTL_ADD, tfd, &ev);//注册epoll事件
 	if (ret == -1)
 	{
 		std::cout << "epoll add client err" << std::endl;
 		return -1;
 	}
-	
-	timers.insert(make_pair(t->GetFd(), t));
 	
 	return 0;
 }
@@ -118,7 +125,7 @@ void TimerManage::ManageLoop()
 				it = timers.find(fd);
 				if (it == timers.end())
 				{
-					std::cout << "can't found timer" << std::endl;
+					std::cout << "can't found timer " << fd << std::endl;
 					continue;
 				}
 
@@ -135,7 +142,14 @@ void TimerManage::ManageLoop()
 
 int TimerManage::Dump()
 {
-	std::cout << "Timers:" << timers.size() << std::endl;
+	map <int, Timer *>::iterator it;
+	cout << "Timers:" << timers.size() << endl;
+	
+	it = timers.begin();
+	while (it != timers.end()){
+		cout << "Timer " << it->first << endl;	
+		it++;
+	}
 	
 	return 0;
 }
