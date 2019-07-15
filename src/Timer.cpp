@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <sys/timerfd.h>
 
-#include "Timer.hpp"
+#include "Timer.h"
 
 using namespace RightTimer;
 using namespace std;

@@ -3,7 +3,7 @@
 #include <sys/time.h>
 #include <time.h>
 
-#include "TimerManage.hpp"
+#include "TimerManage.h"
 
 using namespace RightTimer;
 using namespace std;
