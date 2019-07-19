@@ -4,6 +4,7 @@
 #include <time.h>
 
 #include "TimerManage.h"
+#include "TimerUtil.h"
 
 using namespace RightTimer;
 using namespace std;
@@ -23,17 +24,6 @@ int relCallback(void *userdata)
 	cout << "time arvices " << tv.tv_sec <<	endl;
 	
 	return 0;
-}
-
-int abstime2ts(char *abstime)
-{
-	struct tm tmTemp;
-	
-	strptime(abstime, "%Y-%m-%d %H:%M:%S", &tmTemp);
-	
-	time_t t = mktime(&tmTemp);  
-	
-	return t;
 }
 	
 int main(int argc, char **args)
