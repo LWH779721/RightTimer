@@ -31,15 +31,13 @@ int main(int argc, char **args)
 	TimerManage *tm = TimerManage::GetTimerManager();
 	int ts = abstime2ts("2019-5-29 11:14:11");
 	
-	tm->Start();
-	
 	cout << ts << endl;
 	
-	tm->AddTimer(true, ts, 0, absCallback, NULL);
+	tm->NewTimer(true, ts, 0, absCallback, NULL);
 	
 	tm->Dump();
 	
-	tm->AddTimer(false, 1000, 10*1000, relCallback, NULL);
+	tm->NewTimer(false, 1000, 10*1000, relCallback, NULL);
 	
 	tm->Dump();
 	

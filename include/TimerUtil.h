@@ -3,9 +3,11 @@
 
 #include <string>
 
+using namespace std;
+
 namespace RightTimer {
 
-int abstime2ts(const std::string& abstime);
+int abstime2ts(const string& abstime);
 
 };
 	

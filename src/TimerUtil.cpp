@@ -7,8 +7,6 @@
 
 namespace RightTimer {
 
-using namespace std;
-
 int abstime2ts(const string& abstime){
 	struct tm tmTemp;
 	

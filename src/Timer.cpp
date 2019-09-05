@@ -4,24 +4,22 @@
 
 #include "Timer.h"
 
-using namespace RightTimer;
 using namespace std;
 
-Timer::Timer()
-{
+namespace RightTimer {
+	
+Timer::Timer(){
 	tfd = 0;
 	repeat = false;
 	abs = false;
 }
 
-int Timer::SetUpAbsTimer(int delay)
-{
+int Timer::SetUpAbsTimer(int delay){
 	struct itimerspec new_value = {0};
 	int timerfd;
 	
 	timerfd = timerfd_create(CLOCK_REALTIME, TFD_CLOEXEC | TFD_NONBLOCK);
-	if (timerfd < 0)
-	{
+	if (timerfd < 0){
 		std::cout << "timerfd_create error" << std::endl;
 		return -1;
 	}
@@ -29,8 +27,7 @@ int Timer::SetUpAbsTimer(int delay)
 	new_value.it_value.tv_sec = delay;
 	new_value.it_value.tv_nsec = 0;//delay%1000;
 	
-	if (timerfd_settime(timerfd, TFD_TIMER_ABSTIME, &new_value, NULL) != 0)
-	{
+	if (timerfd_settime(timerfd, TFD_TIMER_ABSTIME, &new_value, NULL) != 0){
 		std::cout << "timerfd_settime error" << std::endl;
 		close(timerfd);
 		return -1;
@@ -39,8 +36,7 @@ int Timer::SetUpAbsTimer(int delay)
 	return timerfd;
 }
 
-int Timer::SetUpRelativeTimer(int delay, int interval)
-{
+int Timer::SetUpRelativeTimer(int delay, int interval){
 	struct itimerspec new_value = {0};
 	int timerfd;
 	
@@ -107,8 +103,7 @@ bool Timer::GetRepeat()
 	return repeat;
 }
 
-Timer::~Timer()
-{
+Timer::~Timer(){
 	close(tfd);
 }
- 
+}
