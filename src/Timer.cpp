@@ -8,8 +8,7 @@ using namespace std;
 
 namespace RightTimer {
 	
-Timer::Timer(){
-	tfd = 0;
+Timer::Timer():m_timerfd(-1){
 	repeat = false;
 	abs = false;
 }
@@ -70,21 +69,32 @@ int Timer::Init(bool abs, int delay, int interval, timer_callback cb, void *user
 	
 	if (this->abs == true)
 	{
-		tfd = SetUpAbsTimer(delay);
+		m_timerfd = SetUpAbsTimer(delay);
 		this->repeat = false;
 	}
 	else
 	{
-		tfd = SetUpRelativeTimer(delay, interval);
+		m_timerfd = SetUpRelativeTimer(delay, interval);
 		this->repeat = true;
 	}
 	
-	if (tfd == -1)
+	if (m_timerfd == -1)
 	{
 		return -1;
 	}
 	
 	return 0;
+}
+
+bool Timer::Pause(){
+	struct itimerspec new_value = {0};
+	
+	if (timerfd_settime(m_timerfd, 0, &new_value, NULL) != 0){
+		perror("timerfd_settime failed");
+		return false;
+	}	
+		
+	return true;
 }
 
 int Timer::RunCallback()
@@ -95,7 +105,7 @@ int Timer::RunCallback()
 
 int Timer::GetFd()
 {
-	return tfd;
+	return m_timerfd;
 }
 
 bool Timer::GetRepeat()
@@ -104,6 +114,6 @@ bool Timer::GetRepeat()
 }
 
 Timer::~Timer(){
-	close(tfd);
+	close(m_timerfd);
 }
 }

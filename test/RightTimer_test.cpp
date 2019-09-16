@@ -3,7 +3,7 @@
 #include <sys/time.h>
 #include <time.h>
 
-#include "TimerManage.h"
+#include "TimerManager.h"
 #include "TimerUtil.h"
 
 using namespace RightTimer;
@@ -28,18 +28,23 @@ int relCallback(void *userdata)
 	
 int main(int argc, char **args)
 {
-	TimerManage *tm = TimerManage::GetTimerManager();
+	TimerManager *tm = TimerManager::GetTimerManager();
 	int ts = abstime2ts("2019-5-29 11:14:11");
+	int timerfd1 = -1, timerfd2 = -1;
 	
 	cout << ts << endl;
 	
-	tm->NewTimer(true, ts, 0, absCallback, NULL);
+	timerfd1 = tm->NewTimer(true, ts, 0, absCallback, NULL);
 	
 	tm->Dump();
 	
-	tm->NewTimer(false, 1000, 10*1000, relCallback, NULL);
+	timerfd2 = tm->NewTimer(false, 1000, 10*1000, relCallback, NULL);
 	
 	tm->Dump();
+	
+	sleep(30);
+	
+	tm->PauseTimer(timerfd2);
 	
 	while (1)
 	{

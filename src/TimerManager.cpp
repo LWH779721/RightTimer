@@ -1,9 +1,10 @@
 #include <iostream>
 #include <unistd.h>
 #include <sys/epoll.h>
+#include <sys/prctl.h>
 #include <errno.h>
 
-#include "TimerManage.h"
+#include "TimerManager.h"
 
 using namespace std;
 
@@ -11,15 +12,15 @@ extern int errno;
 
 namespace RightTimer {
 
-TimerManage* TimerManage::tm = NULL;
+TimerManager* TimerManager::tm = NULL;
 
-TimerManage::TimerManage():
+TimerManager::TimerManager():
 		m_epfd(-1){
 }
 
-TimerManage* TimerManage::GetTimerManager(){
+TimerManager* TimerManager::GetTimerManager(){
 	if (NULL == tm){
-		tm = new TimerManage();
+		tm = new TimerManager();
 		bool ret = tm->init();
 		if (ret == false){
 			delete tm;
@@ -30,46 +31,46 @@ TimerManage* TimerManage::GetTimerManager(){
 	return tm;
 }
 
-bool TimerManage::init(){
+bool TimerManager::init(){
 	m_epfd = epoll_create1(EPOLL_CLOEXEC);
     if (m_epfd == -1){
 		cout << "err when epoll create" << endl;
         return false;
     }
 	
-	m_thread = std::thread(&TimerManage::ManageLoop, this);
+	m_thread = std::thread(&TimerManager::ManageLoop, this);
 	
 	return true;
 }
 
-int TimerManage::NewTimer(bool abs, int delay, int interval, timer_callback cb, void *userdata){
+int TimerManager::NewTimer(bool abs, int delay, int interval, timer_callback cb, void *userdata){
 	struct epoll_event ev;
-	int tfd = -1;
 	int ret = -1;
 	Timer *t = new Timer;
 	
 	ret = t->Init(abs, delay, interval, cb, userdata);
 	if (ret < 0){
 		cout << "err when create timer" << endl;
+		delete t;
 		return -1;
 	}
 	
-	tfd = t->GetFd();
-	std::cout << "AddTimer:" << tfd << std::endl;
-	timers.insert(make_pair(tfd, t));
+	std::cout << "AddTimer:" << t->m_timerfd << std::endl;
+	m_timers.insert(make_pair(t->m_timerfd, t));
 	
-	ev.data.fd = tfd;
+	ev.data.fd = t->m_timerfd;
     ev.events = EPOLLIN|EPOLLET;
-    ret = epoll_ctl(m_epfd, EPOLL_CTL_ADD, tfd, &ev);
+    ret = epoll_ctl(m_epfd, EPOLL_CTL_ADD, t->m_timerfd, &ev);
 	if (ret == -1){
 		std::cout << "epoll add client err" << std::endl;
+		delete t;
 		return -1;
 	}
 	
-	return 0;
+	return t->m_timerfd;
 }
 
-int TimerManage::RemoveTimer(map<int, Timer *>::iterator it){
+int TimerManager::RemoveTimer(map<int, Timer *>::iterator it){
 	struct epoll_event ev;
 	int ret = -1;
 	
@@ -82,17 +83,31 @@ int TimerManage::RemoveTimer(map<int, Timer *>::iterator it){
 		return -1;
 	}
 	
-	timers.erase(it);
+	m_timers.erase(it);
 	
 	return 0;
 }
 
-void TimerManage::ManageLoop(){	
+bool TimerManager::PauseTimer(int timerfd){
+	map <int, Timer *>::iterator it;
+	
+	it = m_timers.find(timerfd);
+	if (it == m_timers.end()){
+		cout << "can't found timer " << timerfd << endl;
+		return false;
+	}
+	
+	return it->second->Pause();
+}
+
+void TimerManager::ManageLoop(){	
 	int nfds, i, fd;
 	struct epoll_event events[10];
 	uint64_t howmany;
 	map <int, Timer *>::iterator it;
-					
+	
+	prctl(PR_SET_NAME, "TimerManager");
+	
 	while (1){
         nfds = epoll_wait(m_epfd, events, 10, -1);
         if (nfds == -1){
@@ -112,8 +127,8 @@ void TimerManage::ManageLoop(){
 					continue;
 				}
 				
-				it = timers.find(fd);
-				if (it == timers.end()){
+				it = m_timers.find(fd);
+				if (it == m_timers.end()){
 					std::cout << "can't found timer " << fd << std::endl;
 					continue;
 				}
@@ -128,12 +143,12 @@ void TimerManage::ManageLoop(){
     }
 }
 
-int TimerManage::Dump(){
+int TimerManager::Dump(){
 	map <int, Timer *>::iterator it;
 	
-	cout << "Timers:" << timers.size() << endl;
-	it = timers.begin();
-	while (it != timers.end()){
+	cout << "Timers:" << m_timers.size() << endl;
+	it = m_timers.begin();
+	while (it != m_timers.end()){
 		cout << "Timer " << it->first << endl;	
 		++it;
 	}
@@ -141,7 +156,7 @@ int TimerManage::Dump(){
 	return 0;
 }
 
-TimerManage::~TimerManage(){
+TimerManager::~TimerManager(){
 	if (m_thread.joinable()){
 		m_thread.join();	
 	}
