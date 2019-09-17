@@ -49,8 +49,11 @@ int Timer::SetUpRelativeTimer(int delay, int interval){
 	
 	new_value.it_value.tv_sec = delay/1000;
 	new_value.it_value.tv_nsec = 0;
-	new_value.it_interval.tv_sec = interval/1000;
-	new_value.it_interval.tv_nsec = interval%1000;
+	
+	if (interval){
+		new_value.it_interval.tv_sec = interval/1000;
+		new_value.it_interval.tv_nsec = interval%1000;
+	}
 	
 	if (timerfd_settime(timerfd, 0, &new_value, NULL) != 0){
 		perror("timerfd_settime failed");
@@ -61,25 +64,22 @@ int Timer::SetUpRelativeTimer(int delay, int interval){
 	return timerfd;
 }
 
-int Timer::Init(bool abs, int delay, int interval, timer_callback cb, void *userdata)
-{
+int Timer::Init(bool abs, int delay, int interval, timer_callback cb, void *userdata){
 	this->abs = abs;
 	this->cb = cb;
 	this->userdata = userdata;
 	
-	if (this->abs == true)
-	{
+	if (this->abs == true){
 		m_timerfd = SetUpAbsTimer(delay);
-		this->repeat = false;
-	}
-	else
-	{
+	} else {
 		m_timerfd = SetUpRelativeTimer(delay, interval);
+	}
+	
+	if (interval > 0){
 		this->repeat = true;
 	}
 	
-	if (m_timerfd == -1)
-	{
+	if (m_timerfd == -1){
 		return -1;
 	}
 	
