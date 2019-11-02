@@ -11,31 +11,33 @@ using namespace std;
 
 namespace RightTimer {
 
-class TimerManager {
+class TimerDetector {
 public:
-	static TimerManager *GetTimerManager();
+	static TimerDetector *GetDefaultDetector();
 	
-	int NewTimer(bool abs, int delay, int interval, timer_callback cb, void *userdata);
+	bool DetectTimer(Timer *t);
 	
 	int RemoveTimer(std::map<int, Timer *>::iterator it);
 	
 	bool PauseTimer(int timerfd);
 	
+	bool StopTimer(int timerfd);
+	
 	int Dump();
+	
+	~TimerDetector();	
 private:	
 	void ManageLoop();
 	
-	TimerManager();
+	TimerDetector();
 	
-	TimerManager(const TimerManager&);
+	TimerDetector(const TimerDetector&);
 	
-	TimerManager& operator = (const TimerManager&);
+	TimerDetector& operator = (const TimerDetector&);
 	
 	bool init();
-		
-	~TimerManager();	
 private:
-	static TimerManager *tm;
+	static TimerDetector *defaultDetector;
 	
 	std::map<int, Timer *> m_timers;
 	

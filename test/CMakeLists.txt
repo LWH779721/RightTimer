@@ -6,5 +6,8 @@ add_definitions("-std=c++11")
 
 INCLUDE_DIRECTORIES(../include) 
 
-ADD_EXECUTABLE(RightTimer_test RightTimer_test.cpp)  
-TARGET_LINK_LIBRARIES(RightTimer_test RightTimer)
+#ADD_EXECUTABLE(RightTimer_test RightTimer_test.cpp)  
+#TARGET_LINK_LIBRARIES(RightTimer_test RightTimer)
+
+ADD_EXECUTABLE(Alarm Alarm.cpp)  
+TARGET_LINK_LIBRARIES(Alarm RightTimer)

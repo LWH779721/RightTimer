@@ -1,31 +1,54 @@
 #ifndef __TIMER_HPP__
 #define __TIMER_HPP__
 
+#include <string>
+
+using namespace std;
+
 namespace RightTimer {
 
-typedef int (*timer_callback)(void *userdata);
-
 class Timer {
-	friend class TimerManager;
+	friend class TimerDetector;
 public:
-	Timer();
-	int Init(bool abs, int delay, int interval, timer_callback cb, void *userdata);
-	int RunCallback();
-	int GetFd();
-	bool GetRepeat();
-	bool Pause();
-	~Timer();
+	Timer(string name):
+		m_timerfd(-1),
+		m_absOrRelative(false),
+		m_execTimes(0),
+		m_name(name),
+		m_delaySec(0),
+		m_delayNsec(0),
+		m_intervalSec(0),
+		m_intervalNsec(0){
+	}
 	
-private:	
-	int SetUpAbsTimer(int delay);
-	int SetUpRelativeTimer(int delay, int interval);
+	virtual bool Init() = 0;
 	
-private:
+	virtual bool Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec) = 0;
+	
+	virtual bool Stop() = 0;
+	
+	virtual bool Restart() = 0;
+	
+	virtual void Run() = 0;	
+protected:
 	int m_timerfd;
-	bool repeat;
-	bool abs;
-	void *userdata;
-	timer_callback cb;	
+	
+	//abs Timer or relative Timer
+	bool m_absOrRelative;
+	
+	// Timer exec times
+	int m_execTimes;
+	
+	// Timer name for debug
+	string m_name;
+	
+	unsigned int m_delaySec;
+	
+	unsigned int m_delayNsec;
+	
+	unsigned int m_intervalSec;
+	
+	unsigned int m_intervalNsec;
 };
 };
 	
