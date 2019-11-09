@@ -3,26 +3,23 @@
 #include <sys/time.h>
 #include <time.h>
 
-#include "Alarm.h"
+#include "WifiConnect.h"
 
 using namespace RightTimer;
 using namespace std;
 
-Alarm::Alarm(string name):RealTimer(name){
-	int ts = abstime2ts("2019-11-2 16:58:11");
-	std::cout << ts << std::endl;
-	
-	Init(true, ts, 0, 0, 0);
+WifiConnect::WifiConnect(string name):MonotonicTimer(name){
+	Init(false, 0, 1, 1, 0);
 	
 	TimerDetector *tm = TimerDetector::GetDefaultDetector();
 	tm->DetectTimer(this);
-	
+	//Run();
 	Start();
 	
 	tm->Dump();
 }
 
-void Alarm::Run(){
+void WifiConnect::Run(){
 	struct timeval tv = {0};
 
 	gettimeofday(&tv, NULL);
@@ -30,12 +27,13 @@ void Alarm::Run(){
 	cout << "time arvices " << tv.tv_sec <<	endl;
 }
 
-Alarm::~Alarm(){
+WifiConnect::~WifiConnect(){
 }
 	
 int main(int argc, char **args){
-	Alarm a("alarm");
+	WifiConnect *a = new WifiConnect("wifiConnect");
 	
+	//delete a;
 	while (1){
 		sleep(1);
 	}

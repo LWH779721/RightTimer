@@ -21,13 +21,14 @@ public:
 		m_intervalNsec(0){
 	}
 	
-	virtual bool Init() = 0;
+	virtual bool Init(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec) = 0;
 	
+	// start Timer
+	virtual bool Start() = 0;
 	virtual bool Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec) = 0;
 	
+	// stop Timer
 	virtual bool Stop() = 0;
-	
-	virtual bool Restart() = 0;
 	
 	virtual void Run() = 0;	
 protected:

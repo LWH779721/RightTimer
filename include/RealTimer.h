@@ -14,13 +14,12 @@ class RealTimer:
 public:
 	RealTimer(string name);
 	
-	bool Init();
+	bool Init(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec);
 	
+	bool Start();
 	bool Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec);
 	
 	bool Stop();
-	
-	bool Restart();
 	
 	virtual void Run() = 0;
 	

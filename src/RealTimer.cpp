@@ -12,12 +12,34 @@ RealTimer::RealTimer(string name):
 	Timer(name){
 }
 
-bool RealTimer::Init(){
+bool RealTimer::Init(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec){
 	m_timerfd = timerfd_create(CLOCK_REALTIME, TFD_CLOEXEC | TFD_NONBLOCK);
 	if (m_timerfd < 0){
 		perror("timerfd_create failed");
 		return false;
 	}
+	
+	m_absOrRelative = absOrRelative;
+	m_delaySec = delaySec;
+	m_delayNsec = delayNsec;
+	m_intervalSec = intervalSec;
+	m_intervalNsec = intervalNsec;
+	
+	return true;
+}
+
+bool RealTimer::Start(){
+	struct itimerspec new_value = {0};
+	
+	new_value.it_value.tv_sec = m_delaySec;
+	new_value.it_value.tv_nsec = m_delayNsec;
+	new_value.it_interval.tv_sec = m_intervalSec;
+	new_value.it_interval.tv_nsec = m_intervalNsec;
+	
+	if (timerfd_settime(m_timerfd, m_absOrRelative?TFD_TIMER_ABSTIME:0, &new_value, NULL) != 0){
+		perror("timerfd_settime failed");
+		return false;
+	}	
 	
 	return true;
 }
@@ -53,20 +75,6 @@ bool RealTimer::Stop(){
 	}	
 		
 	return true;
-}
-
-bool RealTimer::Restart(){
-	struct itimerspec new_value = {0};
-	
-	new_value.it_value.tv_sec = m_delaySec;
-	new_value.it_value.tv_nsec = m_delayNsec;
-	new_value.it_interval.tv_sec = m_intervalSec;
-	new_value.it_interval.tv_nsec = m_intervalNsec;
-	
-	if (timerfd_settime(m_timerfd, m_absOrRelative?TFD_TIMER_ABSTIME:0, &new_value, NULL) != 0){
-		perror("timerfd_settime failed");
-		return false;
-	}
 }
 
 RealTimer::~RealTimer(){

@@ -148,7 +148,8 @@ void TimerDetector::ManageLoop(){
 					std::cout << "can't found timer " << fd << std::endl;
 					continue;
 				}
-
+				
+				it->second->m_execTimes++;
 				it->second->Run();
             }          
         }
