@@ -12,16 +12,15 @@ class MonotonicTimer:
 	public Timer {
 	friend class TimerDetector;
 public:
-	MonotonicTimer(string name);
+	MonotonicTimer(string name, bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback);
 	
-	bool Init(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec);
+	bool Init();
 	
 	bool Start();
-	bool Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec);
 	
 	bool Stop();
 	
-	virtual void Run() = 0;
+	bool Reset(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback);
 	
 	~MonotonicTimer();
 private:

@@ -8,28 +8,27 @@ using namespace std;
 
 namespace RightTimer {
 	
-MonotonicTimer::MonotonicTimer(string name):
-	Timer(name){
+MonotonicTimer::MonotonicTimer(string name, bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback):
+	Timer(name, absOrRelative, delaySec, delayNsec, intervalSec, intervalNsec, callback){
 }
 
-bool MonotonicTimer::Init(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec){
+bool MonotonicTimer::Init(){
 	m_timerfd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC | TFD_NONBLOCK);
 	if (m_timerfd < 0){
 		perror("timerfd_create failed");
 		return false;
 	}
 	
-	m_absOrRelative = absOrRelative;
-	m_delaySec = delaySec;
-	m_delayNsec = delayNsec;
-	m_intervalSec = intervalSec;
-	m_intervalNsec = intervalNsec;
-	
 	return true;
 }
 
 bool MonotonicTimer::Start(){
 	struct itimerspec new_value = {0};
+	
+	if (m_callback == nullptr){
+		cout << "m_callback is nullptr" << endl;
+		return false;	
+	}
 	
 	new_value.it_value.tv_sec = m_delaySec;
 	new_value.it_value.tv_nsec = m_delayNsec;
@@ -44,7 +43,7 @@ bool MonotonicTimer::Start(){
 	return true;
 }
 
-bool MonotonicTimer::Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec){
+bool MonotonicTimer::Reset(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback){
 	struct itimerspec new_value = {0};
 	
 	m_absOrRelative = absOrRelative;
@@ -52,6 +51,7 @@ bool MonotonicTimer::Start(bool absOrRelative, unsigned int delaySec, unsigned i
 	m_delayNsec = delayNsec;
 	m_intervalSec = intervalSec;
 	m_intervalNsec = intervalNsec;
+	m_callback = callback;
 	
 	new_value.it_value.tv_sec = m_delaySec;
 	new_value.it_value.tv_nsec = m_delayNsec;
@@ -78,7 +78,8 @@ bool MonotonicTimer::Stop(){
 }
 
 MonotonicTimer::~MonotonicTimer(){
-	cout << "close timer fd" << endl;
-	close(m_timerfd);
+	if (m_timerfd){
+		close(m_timerfd);
+	}
 }
 }

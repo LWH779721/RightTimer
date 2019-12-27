@@ -2,6 +2,7 @@
 #define __TIMER_HPP__
 
 #include <string>
+#include <functional>
 
 using namespace std;
 
@@ -10,27 +11,36 @@ namespace RightTimer {
 class Timer {
 	friend class TimerDetector;
 public:
-	Timer(string name):
+	Timer(string name,
+		bool absOrRelative = false, 
+		unsigned int delaySec = 0, 
+		unsigned int delayNsec = 0, 
+		unsigned int intervalSec = 0, 
+		unsigned int intervalNsec = 0,
+		function<void()> callback = nullptr):
 		m_timerfd(-1),
-		m_absOrRelative(false),
+		m_absOrRelative(absOrRelative),
 		m_execTimes(0),
 		m_name(name),
-		m_delaySec(0),
-		m_delayNsec(0),
-		m_intervalSec(0),
-		m_intervalNsec(0){
+		m_delaySec(delaySec),
+		m_delayNsec(delayNsec),
+		m_intervalSec(intervalSec),
+		m_intervalNsec(intervalNsec),
+		m_callback(callback){
 	}
 	
-	virtual bool Init(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec) = 0;
+	virtual bool Init() = 0;
 	
 	// start Timer
 	virtual bool Start() = 0;
-	virtual bool Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec) = 0;
 	
 	// stop Timer
 	virtual bool Stop() = 0;
 	
-	virtual void Run() = 0;	
+	// reset Timer
+	virtual bool Reset(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback) = 0;
+
+	//~Timer();
 protected:
 	int m_timerfd;
 	
@@ -50,7 +60,15 @@ protected:
 	unsigned int m_intervalSec;
 	
 	unsigned int m_intervalNsec;
+	
+	function<void()> m_callback;
 };
+
+/*Timer::~Timer(){
+	if (m_timerfd){
+		close(m_timerfd);
+	}
+}*/
 };
 	
 #endif

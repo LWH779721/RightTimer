@@ -8,13 +8,13 @@
 using namespace RightTimer;
 using namespace std;
 
-WifiConnect::WifiConnect(string name):MonotonicTimer(name){
-	Init(false, 0, 1, 1, 0);
+WifiConnect::WifiConnect(string name){
+	t = new MonotonicTimer(name, false, 10, 0, 1, 0, bind(&WifiConnect::Run, this));
+	t->Init();
 	
 	TimerDetector *tm = TimerDetector::GetDefaultDetector();
-	tm->DetectTimer(this);
-	//Run();
-	Start();
+	tm->DetectTimer(t);
+	t->Start();
 	
 	tm->Dump();
 }
@@ -25,6 +25,15 @@ void WifiConnect::Run(){
 	gettimeofday(&tv, NULL);
 
 	cout << "time arvices " << tv.tv_sec <<	endl;
+	t->Reset(false, 10, 0, 1, 0, bind(&WifiConnect::Run1, this));
+}
+
+void WifiConnect::Run1(){
+	struct timeval tv = {0};
+
+	gettimeofday(&tv, NULL);
+
+	cout << "time1 arvices " << tv.tv_sec <<	endl;
 }
 
 WifiConnect::~WifiConnect(){

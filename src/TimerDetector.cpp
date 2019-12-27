@@ -150,7 +150,7 @@ void TimerDetector::ManageLoop(){
 				}
 				
 				it->second->m_execTimes++;
-				it->second->Run();
+				it->second->m_callback();
             }          
         }
     }

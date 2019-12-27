@@ -7,16 +7,18 @@
 
 using namespace RightTimer;
 
-class WifiConnect:
-	public RightTimer::MonotonicTimer{
+class WifiConnect{
 public:
 	WifiConnect(string name);
 	
 	void Run();
 	
+	void Run1();
+	
 	~WifiConnect();
 	
 private:
+	MonotonicTimer *t;
 };
 	
 #endif
