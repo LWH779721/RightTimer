@@ -21,6 +21,8 @@ public:
 	bool Stop();
 	
 	bool Reset(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback);
+
+	bool Reset();
 	
 	~MonotonicTimer();
 private:

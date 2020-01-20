@@ -133,7 +133,6 @@ void TimerDetector::ManageLoop(){
 				continue;
         }
         
-		std::cout << "Timer end" << std::endl;        
         for (i = 0; i < nfds; ++i){
             if (events[i].events & EPOLLIN){                            
 				fd = events[i].data.fd;
@@ -149,6 +148,7 @@ void TimerDetector::ManageLoop(){
 					continue;
 				}
 				
+				cout << it->second->m_name << " Timer end" << endl;
 				it->second->m_execTimes++;
 				it->second->m_callback();
             }          

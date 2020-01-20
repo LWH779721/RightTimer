@@ -25,7 +25,7 @@ void WifiConnect::Run(){
 	gettimeofday(&tv, NULL);
 
 	cout << "time arvices " << tv.tv_sec <<	endl;
-	//t->Reset(false, 10, 0, 1, 0, bind(&WifiConnect::Run1, this));
+	t->Reset(false, 10, 0, 1, 0, bind(&WifiConnect::Run1, this));
 }
 
 void WifiConnect::Run1(){

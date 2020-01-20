@@ -39,8 +39,8 @@ public:
 	
 	// reset Timer
 	virtual bool Reset(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback) = 0;
-
-	//~Timer();
+	virtual bool Reset() = 0;
+	
 protected:
 	int m_timerfd;
 	
@@ -63,12 +63,6 @@ protected:
 	
 	function<void()> m_callback;
 };
-
-/*Timer::~Timer(){
-	if (m_timerfd){
-		close(m_timerfd);
-	}
-}*/
-};
+}
 	
 #endif

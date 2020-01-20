@@ -32,7 +32,7 @@ bool RealTimer::Start(){
 	
 	//Cause: Timer will stop when it_value is zero, No matter what the value of it_interval is
 	if ((m_delaySec != 0)
-		|| (m_delaySec != 0)){
+		|| (m_delayNsec != 0)){
 		new_value.it_value.tv_sec = m_delaySec;
 		new_value.it_value.tv_nsec = m_delayNsec;
 	} else {
@@ -52,26 +52,20 @@ bool RealTimer::Start(){
 }
 
 bool RealTimer::Reset(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback){
-	struct itimerspec new_value = {0};
+	Stop();
 	
 	m_absOrRelative = absOrRelative;
 	m_delaySec = delaySec;
 	m_delayNsec = delayNsec;
 	m_intervalSec = intervalSec;
 	m_intervalNsec = intervalNsec;
-	
-	new_value.it_value.tv_sec = m_delaySec;
-	new_value.it_value.tv_nsec = m_delayNsec;
-	new_value.it_interval.tv_sec = m_intervalSec;
-	new_value.it_interval.tv_nsec = m_intervalNsec;
 	m_callback = callback;
 	
-	if (timerfd_settime(m_timerfd, m_absOrRelative?TFD_TIMER_ABSTIME:0, &new_value, NULL) != 0){
-		perror("timerfd_settime failed");
-		return false;
-	}	
-	
-	return true;
+	return Start();
+}
+
+bool RealTimer::Reset(){
+	return Start();
 }
 
 bool RealTimer::Stop(){
