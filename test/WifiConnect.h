@@ -18,7 +18,7 @@ public:
 	~WifiConnect();
 	
 private:
-	MonotonicTimer *t;
+	std::shared_ptr<MonotonicTimer> m_timer;
 };
 	
 #endif

@@ -15,9 +15,9 @@ class TimerDetector {
 public:
 	static TimerDetector *GetDefaultDetector();
 	
-	bool DetectTimer(Timer *t);
+	bool DetectTimer(std::shared_ptr<Timer> timer);
 	
-	int RemoveTimer(std::map<int, Timer *>::iterator it);
+	int RemoveTimer(std::map<int, std::shared_ptr<Timer>>::iterator it);
 	
 	bool PauseTimer(int timerfd);
 	
@@ -39,7 +39,7 @@ private:
 private:
 	static TimerDetector *defaultDetector;
 	
-	std::map<int, Timer *> m_timers;
+	std::map<int, std::shared_ptr<Timer>> m_timers;
 	
 	int m_epfd;
 	

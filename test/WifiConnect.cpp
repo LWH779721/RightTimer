@@ -5,16 +5,15 @@
 
 #include "WifiConnect.h"
 
-using namespace RightTimer;
 using namespace std;
 
 WifiConnect::WifiConnect(string name){
-	t = new MonotonicTimer(name, false, 0, 0, 1, 0, bind(&WifiConnect::Run, this));
-	t->Init();
+	m_timer = std::make_shared<MonotonicTimer>(name, false, 0, 0, 1, 0, bind(&WifiConnect::Run, this));
+	m_timer->Init();
 	
 	TimerDetector *tm = TimerDetector::GetDefaultDetector();
-	tm->DetectTimer(t);
-	t->Start();
+	tm->DetectTimer(m_timer);
+	m_timer->Start();
 	
 	tm->Dump();
 }
@@ -25,7 +24,7 @@ void WifiConnect::Run(){
 	gettimeofday(&tv, NULL);
 
 	cout << "time arvices " << tv.tv_sec <<	endl;
-	t->Reset(false, 10, 0, 1, 0, bind(&WifiConnect::Run1, this));
+	m_timer->Reset(false, 10, 0, 1, 0, bind(&WifiConnect::Run1, this));
 }
 
 void WifiConnect::Run1(){
