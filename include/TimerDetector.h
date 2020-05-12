@@ -5,12 +5,11 @@
 #include <thread>
 #include <map>
 
-#include "Timer.h"
-
 using namespace std;
 
 namespace RightTimer {
 
+class Timer;
 class TimerDetector {
 public:
 	static TimerDetector *GetDefaultDetector();

@@ -3,11 +3,13 @@
 
 #include <string>
 #include <functional>
+#include <memory>
 
 using namespace std;
 
 namespace RightTimer {
 
+class TimerDetector;
 class Timer {
 	friend class TimerDetector;
 public:
@@ -19,6 +21,7 @@ public:
 		unsigned int intervalNsec = 0,
 		function<void()> callback = nullptr):
 		m_timerfd(-1),
+        m_inited(false),
 		m_absOrRelative(absOrRelative),
 		m_execTimes(0),
 		m_name(name),
@@ -30,6 +33,8 @@ public:
 	}
 	
 	virtual bool Init() = 0;
+    
+    virtual bool Init(std::shared_ptr<TimerDetector> timerDetector) = 0;
 	
 	// start Timer
 	virtual bool Start() = 0;
@@ -43,6 +48,8 @@ public:
 	
 protected:
 	int m_timerfd;
+    
+    bool m_inited;
 	
 	//abs Timer or relative Timer
 	bool m_absOrRelative;

@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <sys/timerfd.h>
 
+#include "TimerDetector.h"
 #include "MonotonicTimer.h"
 
 using namespace std;
@@ -19,7 +20,22 @@ bool MonotonicTimer::Init(){
 		return false;
 	}
 	
+    TimerDetector *tm = TimerDetector::GetDefaultDetector();
+	tm->DetectTimer(shared_from_this());
+    m_inited = true;
 	return true;
+}
+
+bool MonotonicTimer::Init(std::shared_ptr<TimerDetector> timerDetector){
+    m_timerfd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC | TFD_NONBLOCK);
+	if (m_timerfd < 0){
+		perror("timerfd_create failed");
+		return false;
+	}
+	
+    timerDetector->DetectTimer(shared_from_this());
+    m_inited = true;
+	return true;        
 }
 
 bool MonotonicTimer::Start(){
@@ -29,7 +45,12 @@ bool MonotonicTimer::Start(){
 		cout << "m_callback is nullptr" << endl;
 		return false;	
 	}
-	
+    
+    if (!m_inited && !Init()){
+        cout << "Timer init failed" << endl;
+		return false;
+    }
+    
 	//Cause: Timer will stop when it_value is zero, No matter what the value of it_interval is
 	if ((m_delaySec != 0)
 		|| (m_delayNsec != 0)){

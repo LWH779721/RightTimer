@@ -4,6 +4,7 @@
 #include <sys/prctl.h>
 #include <errno.h>
 
+#include "Timer.h"
 #include "TimerDetector.h"
 
 using namespace std;

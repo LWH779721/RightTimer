@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <sys/timerfd.h>
 
+#include "TimerDetector.h"
 #include "RealTimer.h"
 
 using namespace std;
@@ -19,7 +20,20 @@ bool RealTimer::Init(){
 		return false;
 	}
 	
+    m_inited = true;
 	return true;
+}
+
+bool RealTimer::Init(std::shared_ptr<TimerDetector> timerDetector){
+    m_timerfd = timerfd_create(CLOCK_REALTIME, TFD_CLOEXEC | TFD_NONBLOCK);
+	if (m_timerfd < 0){
+		perror("timerfd_create failed");
+		return false;
+	}
+	
+    timerDetector->DetectTimer(shared_from_this());
+    m_inited = true;
+	return true;        
 }
 
 bool RealTimer::Start(){
@@ -29,6 +43,11 @@ bool RealTimer::Start(){
 		cout << "m_callback is nullptr" << endl;
 		return false;	
 	}
+    
+    if (!m_inited && !Init()){
+        cout << "Timer init failed" << endl;
+		return false;
+    }
 	
 	//Cause: Timer will stop when it_value is zero, No matter what the value of it_interval is
 	if ((m_delaySec != 0)

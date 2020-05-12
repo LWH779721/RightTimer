@@ -9,16 +9,19 @@ namespace RightTimer {
  * Real Time Timer
  **/
 class RealTimer:
-	public Timer {
+	public Timer,
+    public std::enable_shared_from_this<RealTimer>{
 	friend class TimerDetector;
 public:
 	RealTimer(string name, bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback);
 	
-	bool Init();
+	bool Init() override;
 	
-	bool Start();
+    bool Init(std::shared_ptr<TimerDetector> timerDetector) override;
+    
+	bool Start() override;
 	
-	bool Stop();
+	bool Stop() override;
 	
 	// auto restart
 	bool Reset(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback);
