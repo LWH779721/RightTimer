@@ -68,13 +68,16 @@ bool MonotonicTimer::Start(){
 		perror("timerfd_settime failed");
 		return false;
 	}	
-	
+    
+	m_actived = true;
 	return true;
 }
 
-bool MonotonicTimer::Reset(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback){	
-	Stop();
-	
+bool MonotonicTimer::Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback){	
+	if (m_actived){
+        Stop();
+	}
+    
 	m_absOrRelative = absOrRelative;
 	m_delaySec = delaySec;
 	m_delayNsec = delayNsec;
@@ -85,12 +88,12 @@ bool MonotonicTimer::Reset(bool absOrRelative, unsigned int delaySec, unsigned i
 	return Start();
 }
 
-bool MonotonicTimer::Reset(){
-	return Start();
-}
-
 bool MonotonicTimer::Stop(){
-	struct itimerspec new_value = {0};
+	if (!m_inited || !m_actived){
+        return true;
+    }
+    
+    struct itimerspec new_value = {0};
 	
 	if (timerfd_settime(m_timerfd, 0, &new_value, NULL) != 0){
 		perror("timerfd_settime failed");

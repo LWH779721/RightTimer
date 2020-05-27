@@ -22,6 +22,7 @@ public:
 		function<void()> callback = nullptr):
 		m_timerfd(-1),
         m_inited(false),
+        m_actived(false),
 		m_absOrRelative(absOrRelative),
 		m_execTimes(0),
 		m_name(name),
@@ -39,17 +40,18 @@ public:
 	// start Timer
 	virtual bool Start() = 0;
 	
-	// stop Timer
-	virtual bool Stop() = 0;
+    // reset Timer
+	virtual bool Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback) = 0;
 	
-	// reset Timer
-	virtual bool Reset(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback) = 0;
-	virtual bool Reset() = 0;
+    // stop Timer
+	virtual bool Stop() = 0;
 	
 protected:
 	int m_timerfd;
     
     bool m_inited;
+    
+    bool m_actived;
 	
 	//abs Timer or relative Timer
 	bool m_absOrRelative;

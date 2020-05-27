@@ -21,11 +21,9 @@ public:
 	
 	bool Start() override;
 	
+    bool Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback) override;
+        
 	bool Stop() override;
-	
-	bool Reset(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback) override;
-
-	bool Reset();
 	
 	~MonotonicTimer();
 private:

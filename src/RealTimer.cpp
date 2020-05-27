@@ -4,6 +4,7 @@
 
 #include "TimerDetector.h"
 #include "RealTimer.h"
+#include "TimerUtil.h"
 
 using namespace std;
 
@@ -20,6 +21,8 @@ bool RealTimer::Init(){
 		return false;
 	}
 	
+    TimerDetector *tm = TimerDetector::GetDefaultDetector();
+	tm->DetectTimer(shared_from_this());
     m_inited = true;
 	return true;
 }
@@ -67,11 +70,28 @@ bool RealTimer::Start(){
 		return false;
 	}	
 	
+    m_actived = true;
 	return true;
 }
 
-bool RealTimer::Reset(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback){
-	Stop();
+bool RealTimer::Start(const string& abstime){
+    if (m_actived){
+        Stop();
+	}
+	
+	m_absOrRelative = true;
+	m_delaySec = abstime2ts(abstime);
+	m_delayNsec = 0;
+	m_intervalSec = 0;
+	m_intervalNsec = 0;
+	
+	return Start();        
+}
+
+bool RealTimer::Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback){
+    if (m_actived){
+        Stop();
+	}
 	
 	m_absOrRelative = absOrRelative;
 	m_delaySec = delaySec;
@@ -83,11 +103,11 @@ bool RealTimer::Reset(bool absOrRelative, unsigned int delaySec, unsigned int de
 	return Start();
 }
 
-bool RealTimer::Reset(){
-	return Start();
-}
-
 bool RealTimer::Stop(){
+    if (!m_inited || !m_actived){
+        return true;
+    }
+    
 	struct itimerspec new_value = {0};
 	
 	if (timerfd_settime(m_timerfd, 0, &new_value, NULL) != 0){

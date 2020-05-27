@@ -8,18 +8,10 @@
 using namespace RightTimer;
 using namespace std;
 
-Alarm::Alarm(string name):RealTimer(name){
-	int ts = abstime2ts("2019-11-2 16:58:11");
-	std::cout << ts << std::endl;
+Alarm::Alarm(string name){
+    m_timer = std::make_shared<RealTimer>(name, true, 0, 0, 0, 0, bind(&Alarm::Run, this));
 	
-	Init(true, ts, 0, 0, 0);
-	
-	TimerDetector *tm = TimerDetector::GetDefaultDetector();
-	tm->DetectTimer(this);
-	
-	Start();
-	
-	tm->Dump();
+    m_timer->Start("2020-05-27 21:07:30");
 }
 
 void Alarm::Run(){

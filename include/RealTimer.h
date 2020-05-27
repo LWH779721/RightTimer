@@ -21,11 +21,11 @@ public:
     
 	bool Start() override;
 	
+    bool Start(const string& abstime);
+    
+	bool Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback) override;
+    
 	bool Stop() override;
-	
-	// auto restart
-	bool Reset(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback);
-	bool Reset();
 	
 	~RealTimer();
 private:

@@ -3,12 +3,10 @@
 
 #include "RealTimer.h"
 #include "TimerDetector.h"
-#include "TimerUtil.h"
 
 using namespace RightTimer;
 
-class Alarm:
-	public RightTimer::RealTimer{
+class Alarm{
 public:
 	Alarm(string name);
 	
@@ -17,6 +15,7 @@ public:
 	~Alarm();
 	
 private:
+    std::shared_ptr<RealTimer> m_timer;
 };
 	
 #endif
