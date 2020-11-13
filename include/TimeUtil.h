@@ -5,7 +5,7 @@
 
 using namespace std;
 
-namespace RightTimer {
+namespace TimeWalker {
 
 int abstime2ts(const string& abstime);
 

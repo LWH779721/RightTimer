@@ -5,7 +5,7 @@
 
 #include "Alarm.h"
 
-using namespace RightTimer;
+using namespace TimeWalker;
 using namespace std;
 
 Alarm::Alarm(string name){

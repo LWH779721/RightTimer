@@ -7,7 +7,7 @@
 
 using namespace std;
 
-namespace RightTimer {
+namespace TimeWalker {
 
 class Timer;
 class TimerDetector {

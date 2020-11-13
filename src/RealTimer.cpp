@@ -4,11 +4,11 @@
 
 #include "TimerDetector.h"
 #include "RealTimer.h"
-#include "TimerUtil.h"
+#include "TimeUtil.h"
 
 using namespace std;
 
-namespace RightTimer {
+namespace TimeWalker {
 	
 RealTimer::RealTimer(string name, bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback):
 	Timer(name, absOrRelative, delaySec, delayNsec, intervalSec, intervalNsec, callback){

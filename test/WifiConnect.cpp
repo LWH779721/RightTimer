@@ -18,8 +18,8 @@ void WifiConnect::Run(){
 
 	gettimeofday(&tv, NULL);
 
-	cout << "time arvices " << tv.tv_sec <<	endl;
-	m_timer->Start(false, 10, 0, 1, 0, bind(&WifiConnect::Run1, this));
+	cout << "time arvices : sec:" << tv.tv_sec << " nsec: " << tv.tv_usec << endl;
+	m_timer->Start(false, 10, 0, 1, 10*1000, bind(&WifiConnect::Run1, this));
 }
 
 void WifiConnect::Run1(){
@@ -27,7 +27,7 @@ void WifiConnect::Run1(){
 
 	gettimeofday(&tv, NULL);
 
-	cout << "time1 arvices " << tv.tv_sec <<	endl;
+	cout << "time arvices : sec:" << tv.tv_sec << " nsec: " << tv.tv_usec << endl;
 }
 
 WifiConnect::~WifiConnect(){

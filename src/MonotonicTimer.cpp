@@ -7,7 +7,7 @@
 
 using namespace std;
 
-namespace RightTimer {
+namespace TimeWalker {
 	
 MonotonicTimer::MonotonicTimer(string name, bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback):
 	Timer(name, absOrRelative, delaySec, delayNsec, intervalSec, intervalNsec, callback){

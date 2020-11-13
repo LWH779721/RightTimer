@@ -11,7 +11,7 @@ using namespace std;
 
 extern int errno;
 
-namespace RightTimer {
+namespace TimeWalker {
 
 TimerDetector* TimerDetector::defaultDetector = NULL;
 

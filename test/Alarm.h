@@ -4,7 +4,7 @@
 #include "RealTimer.h"
 #include "TimerDetector.h"
 
-using namespace RightTimer;
+using namespace TimeWalker;
 
 class Alarm{
 public:

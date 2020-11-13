@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 2.8) 
 
-PROJECT(RightTimer)
+PROJECT(TimeWalker)
 
 add_definitions("-std=c++11 -g") 
 
 INCLUDE_DIRECTORIES(../include)
 
-AUX_SOURCE_DIRECTORY(. RightTimer)
+AUX_SOURCE_DIRECTORY(. TimeWalker)
 
-#ADD_LIBRARY (RightTimer ${RightTimer})
-ADD_LIBRARY (RightTimer SHARED ${RightTimer})
+#ADD_LIBRARY (TimeWalker ${TimeWalker})
+ADD_LIBRARY (TimeWalker SHARED ${TimeWalker})
 
-TARGET_LINK_LIBRARIES(RightTimer pthread)
+TARGET_LINK_LIBRARIES(TimeWalker pthread)

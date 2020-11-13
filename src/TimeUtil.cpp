@@ -3,9 +3,9 @@
 #include <sys/time.h>
 #include <time.h>
 
-#include "TimerUtil.h"
+#include "TimeUtil.h"
 
-namespace RightTimer {
+namespace TimeWalker {
 
 int abstime2ts(const string& abstime){
 	struct tm tmTemp;

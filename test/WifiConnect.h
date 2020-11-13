@@ -3,9 +3,9 @@
 
 #include "MonotonicTimer.h"
 #include "TimerDetector.h"
-#include "TimerUtil.h"
+#include "TimeUtil.h"
 
-using namespace RightTimer;
+using namespace TimeWalker;
 
 class WifiConnect{
 public:

@@ -3,7 +3,7 @@
 
 #include "Timer.h"
 
-namespace RightTimer {
+namespace TimeWalker {
 
 /**
  * Monotonic Time Timer

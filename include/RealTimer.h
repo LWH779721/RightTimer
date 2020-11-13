@@ -3,7 +3,7 @@
 
 #include "Timer.h"
 
-namespace RightTimer {
+namespace TimeWalker {
 
 /**
  * Real Time Timer
