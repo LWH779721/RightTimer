@@ -18,14 +18,11 @@ public:
 	bool Init() override;
 	
     bool Init(std::shared_ptr<TimerDetector> timerDetector) override;
-    
-	bool Start() override;
 	
-    bool Start(const string& abstime);
+    //在绝对时间abstime时回调
+    bool at(const string& abstime);
     
-	bool Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback) override;
-    
-	bool Stop() override;
+	bool Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback);
 	
 	~Schedule();
 private:

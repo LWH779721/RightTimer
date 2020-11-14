@@ -31,14 +31,11 @@ public:
     
     virtual bool Init(std::shared_ptr<TimerDetector> timerDetector) = 0;
 	
-	// start Timer
-	virtual bool Start() = 0;
+	// start walking
+	virtual bool start();
 	
-    // reset Timer
-	virtual bool Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback) = 0;
-	
-    // stop Timer
-	virtual bool Stop() = 0;
+    // stop walking
+	virtual bool stop();
     
     ~TimeWalker();
 protected:

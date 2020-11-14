@@ -19,11 +19,7 @@ public:
     
     bool Init(std::shared_ptr<TimerDetector> timerDetector) override;
 	
-	bool Start() override;
-	
-    bool Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback) override;
-        
-	bool Stop() override;
+    bool Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback);
 	
 	~Timer();
 private:

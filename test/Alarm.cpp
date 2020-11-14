@@ -11,7 +11,8 @@ using namespace std;
 Alarm::Alarm(string name){
     m_schedule = std::make_shared<Schedule>(name, true, 0, 0, 0, 0, bind(&Alarm::Run, this));
 	
-    m_schedule->Start("2020-11-14 10:44:30");
+    m_schedule->Init();
+    m_schedule->at("2020-11-14 15:20:30");
 }
 
 void Alarm::Run(){

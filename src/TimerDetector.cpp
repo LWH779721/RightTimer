@@ -89,7 +89,7 @@ bool TimerDetector::PauseTimer(int timerfd){
 		return false;
 	}
 	
-	return it->second->Stop();
+	return it->second->stop();
 }
 
 bool TimerDetector::StopTimer(int timerfd){

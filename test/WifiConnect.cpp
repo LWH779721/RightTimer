@@ -9,8 +9,9 @@ using namespace std;
 
 WifiConnect::WifiConnect(string name){
 	m_timer = std::make_shared<Timer>(name, false, 0, 0, 1, 0, bind(&WifiConnect::Run, this));
-	
-    m_timer->Start();
+    
+	m_timer->Init();
+    m_timer->start();
 }
 
 void WifiConnect::Run(){
@@ -24,7 +25,14 @@ void WifiConnect::Run(){
 
 void WifiConnect::Run1(){
 	struct timeval tv = {0};
-
+    static int count;
+    
+    count++;
+    if (count == 5){
+        m_timer->stop();
+        return;
+    }
+    
 	gettimeofday(&tv, NULL);
 
 	cout << "time arvices : sec:" << tv.tv_sec << " nsec: " << tv.tv_usec << endl;
