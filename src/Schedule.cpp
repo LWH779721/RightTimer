@@ -3,43 +3,39 @@
 #include <sys/timerfd.h>
 
 #include "TimerDetector.h"
-#include "RealTimer.h"
+#include "Schedule.h"
 #include "TimeUtil.h"
 
 using namespace std;
 
 namespace TimeWalker {
 	
-RealTimer::RealTimer(string name, bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback):
-	Timer(name, absOrRelative, delaySec, delayNsec, intervalSec, intervalNsec, callback){
+Schedule::Schedule(string name, bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback):
+	TimeWalker(name, TimeType::REAL, absOrRelative, delaySec, delayNsec, intervalSec, intervalNsec, callback){
 }
 
-bool RealTimer::Init(){
-	m_timerfd = timerfd_create(CLOCK_REALTIME, TFD_CLOEXEC | TFD_NONBLOCK);
-	if (m_timerfd < 0){
-		perror("timerfd_create failed");
-		return false;
-	}
+bool Schedule::Init(){
+    if (!TimeWalker::Init()) {
+        cout << "TimeWalker init failed" << endl;
+        return false;
+    }
 	
     TimerDetector *tm = TimerDetector::GetDefaultDetector();
 	tm->DetectTimer(shared_from_this());
-    m_inited = true;
 	return true;
 }
 
-bool RealTimer::Init(std::shared_ptr<TimerDetector> timerDetector){
-    m_timerfd = timerfd_create(CLOCK_REALTIME, TFD_CLOEXEC | TFD_NONBLOCK);
-	if (m_timerfd < 0){
-		perror("timerfd_create failed");
-		return false;
-	}
+bool Schedule::Init(std::shared_ptr<TimerDetector> timerDetector){
+    if (!TimeWalker::Init()) {
+        cout << "TimeWalker init failed" << endl;
+        return false;
+    }
 	
     timerDetector->DetectTimer(shared_from_this());
-    m_inited = true;
 	return true;        
 }
 
-bool RealTimer::Start(){
+bool Schedule::Start(){
 	struct itimerspec new_value = {0};
 	
 	if (m_callback == nullptr){
@@ -65,7 +61,7 @@ bool RealTimer::Start(){
 	new_value.it_interval.tv_sec = m_intervalSec;
 	new_value.it_interval.tv_nsec = m_intervalNsec;
 	
-	if (timerfd_settime(m_timerfd, m_absOrRelative?TFD_TIMER_ABSTIME:0, &new_value, NULL) != 0){
+	if (timerfd_settime(m_id, m_absOrRelative?TFD_TIMER_ABSTIME:0, &new_value, NULL) != 0){
 		perror("timerfd_settime failed");
 		return false;
 	}	
@@ -74,7 +70,7 @@ bool RealTimer::Start(){
 	return true;
 }
 
-bool RealTimer::Start(const string& abstime){
+bool Schedule::Start(const string& abstime){
     if (m_actived){
         Stop();
 	}
@@ -88,7 +84,7 @@ bool RealTimer::Start(const string& abstime){
 	return Start();        
 }
 
-bool RealTimer::Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback){
+bool Schedule::Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback){
     if (m_actived){
         Stop();
 	}
@@ -103,14 +99,14 @@ bool RealTimer::Start(bool absOrRelative, unsigned int delaySec, unsigned int de
 	return Start();
 }
 
-bool RealTimer::Stop(){
+bool Schedule::Stop(){
     if (!m_inited || !m_actived){
         return true;
     }
     
 	struct itimerspec new_value = {0};
 	
-	if (timerfd_settime(m_timerfd, 0, &new_value, NULL) != 0){
+	if (timerfd_settime(m_id, 0, &new_value, NULL) != 0){
 		perror("timerfd_settime failed");
 		return false;
 	}	
@@ -118,9 +114,7 @@ bool RealTimer::Stop(){
 	return true;
 }
 
-RealTimer::~RealTimer(){
-	if (m_timerfd){
-		close(m_timerfd);
-	}
+Schedule::~Schedule(){
+
 }
 }

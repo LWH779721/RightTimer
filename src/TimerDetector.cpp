@@ -4,7 +4,7 @@
 #include <sys/prctl.h>
 #include <errno.h>
 
-#include "Timer.h"
+#include "TimeWalker.h"
 #include "TimerDetector.h"
 
 using namespace std;
@@ -44,16 +44,16 @@ bool TimerDetector::init(){
 	return true;
 }
 
-bool TimerDetector::DetectTimer(std::shared_ptr<Timer> timer){
+bool TimerDetector::DetectTimer(std::shared_ptr<TimeWalker> timer){
 	struct epoll_event ev;
 	int ret = -1;
 
-	std::cout << "DetectTimer:" << timer->m_timerfd << std::endl;
-	m_timers.insert(make_pair(timer->m_timerfd, timer));
+	std::cout << "DetectTimer:" << timer->m_id << std::endl;
+	m_timers.insert(make_pair(timer->m_id, timer));
 	
-	ev.data.fd = timer->m_timerfd;
+	ev.data.fd = timer->m_id;
     ev.events = EPOLLIN|EPOLLET;
-    ret = epoll_ctl(m_epfd, EPOLL_CTL_ADD, timer->m_timerfd, &ev);
+    ret = epoll_ctl(m_epfd, EPOLL_CTL_ADD, timer->m_id, &ev);
 	if (ret == -1){
 		std::cout << "epoll add client err" << std::endl;
 		return false;
@@ -62,7 +62,7 @@ bool TimerDetector::DetectTimer(std::shared_ptr<Timer> timer){
 	return true;
 }
 
-int TimerDetector::RemoveTimer(map<int, std::shared_ptr<Timer>>::iterator it){
+int TimerDetector::RemoveTimer(map<int, std::shared_ptr<TimeWalker>>::iterator it){
 	struct epoll_event ev;
 	int ret = -1;
 	
@@ -81,7 +81,7 @@ int TimerDetector::RemoveTimer(map<int, std::shared_ptr<Timer>>::iterator it){
 }
 
 bool TimerDetector::PauseTimer(int timerfd){
-	map <int, std::shared_ptr<Timer>>::iterator it;
+	map <int, std::shared_ptr<TimeWalker>>::iterator it;
 	
 	it = m_timers.find(timerfd);
 	if (it == m_timers.end()){
@@ -95,7 +95,7 @@ bool TimerDetector::PauseTimer(int timerfd){
 bool TimerDetector::StopTimer(int timerfd){
 	struct epoll_event ev;
 	int ret = -1;
-	map <int, std::shared_ptr<Timer>>::iterator it;
+	map <int, std::shared_ptr<TimeWalker>>::iterator it;
 	
 	it = m_timers.find(timerfd);
 	if (it == m_timers.end()){
@@ -119,7 +119,7 @@ void TimerDetector::ManageLoop(){
 	int nfds, i, fd;
 	struct epoll_event events[10];
 	uint64_t howmany;
-	map <int, std::shared_ptr<Timer>>::iterator it;
+	map <int, std::shared_ptr<TimeWalker>>::iterator it;
 	
 	prctl(PR_SET_NAME, "TimerDetector");
 	
@@ -157,7 +157,7 @@ void TimerDetector::ManageLoop(){
 }
 
 int TimerDetector::Dump(){
-	map <int, std::shared_ptr<Timer>>::iterator it;
+	map <int, std::shared_ptr<TimeWalker>>::iterator it;
 	
 	cout << "Timers:" << m_timers.size() << endl;
 	it = m_timers.begin();

@@ -3,42 +3,38 @@
 #include <sys/timerfd.h>
 
 #include "TimerDetector.h"
-#include "MonotonicTimer.h"
+#include "Timer.h"
 
 using namespace std;
 
 namespace TimeWalker {
 	
-MonotonicTimer::MonotonicTimer(string name, bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback):
-	Timer(name, absOrRelative, delaySec, delayNsec, intervalSec, intervalNsec, callback){
+Timer::Timer(string name, bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback):
+	TimeWalker(name, TimeType::MONOTONIC, absOrRelative, delaySec, delayNsec, intervalSec, intervalNsec, callback){
 }
 
-bool MonotonicTimer::Init(){
-	m_timerfd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC | TFD_NONBLOCK);
-	if (m_timerfd < 0){
-		perror("timerfd_create failed");
-		return false;
-	}
+bool Timer::Init(){
+    if (!TimeWalker::Init()) {
+        cout << "TimeWalker init failed" << endl;
+        return false;
+    }
 	
     TimerDetector *tm = TimerDetector::GetDefaultDetector();
 	tm->DetectTimer(shared_from_this());
-    m_inited = true;
 	return true;
 }
 
-bool MonotonicTimer::Init(std::shared_ptr<TimerDetector> timerDetector){
-    m_timerfd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC | TFD_NONBLOCK);
-	if (m_timerfd < 0){
-		perror("timerfd_create failed");
-		return false;
-	}
+bool Timer::Init(std::shared_ptr<TimerDetector> timerDetector){
+    if (!TimeWalker::Init()) {
+        cout << "TimeWalker init failed" << endl;
+        return false;
+    }
 	
     timerDetector->DetectTimer(shared_from_this());
-    m_inited = true;
 	return true;        
 }
 
-bool MonotonicTimer::Start(){
+bool Timer::Start(){
 	struct itimerspec new_value = {0};
 	
 	if (m_callback == nullptr){
@@ -64,7 +60,7 @@ bool MonotonicTimer::Start(){
 	new_value.it_interval.tv_sec = m_intervalSec;
 	new_value.it_interval.tv_nsec = m_intervalNsec;
 	
-	if (timerfd_settime(m_timerfd, m_absOrRelative?TFD_TIMER_ABSTIME:0, &new_value, NULL) != 0){
+	if (timerfd_settime(m_id, m_absOrRelative?TFD_TIMER_ABSTIME:0, &new_value, NULL) != 0){
 		perror("timerfd_settime failed");
 		return false;
 	}	
@@ -73,7 +69,7 @@ bool MonotonicTimer::Start(){
 	return true;
 }
 
-bool MonotonicTimer::Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback){	
+bool Timer::Start(bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback){	
 	if (m_actived){
         Stop();
 	}
@@ -88,14 +84,14 @@ bool MonotonicTimer::Start(bool absOrRelative, unsigned int delaySec, unsigned i
 	return Start();
 }
 
-bool MonotonicTimer::Stop(){
+bool Timer::Stop(){
 	if (!m_inited || !m_actived){
         return true;
     }
     
     struct itimerspec new_value = {0};
 	
-	if (timerfd_settime(m_timerfd, 0, &new_value, NULL) != 0){
+	if (timerfd_settime(m_id, 0, &new_value, NULL) != 0){
 		perror("timerfd_settime failed");
 		return false;
 	}	
@@ -103,9 +99,7 @@ bool MonotonicTimer::Stop(){
 	return true;
 }
 
-MonotonicTimer::~MonotonicTimer(){
-	if (m_timerfd){
-		close(m_timerfd);
-	}
+Timer::~Timer(){
+
 }
 }

@@ -8,7 +8,7 @@
 using namespace std;
 
 WifiConnect::WifiConnect(string name){
-	m_timer = std::make_shared<MonotonicTimer>(name, false, 0, 0, 1, 0, bind(&WifiConnect::Run, this));
+	m_timer = std::make_shared<Timer>(name, false, 0, 0, 1, 0, bind(&WifiConnect::Run, this));
 	
     m_timer->Start();
 }

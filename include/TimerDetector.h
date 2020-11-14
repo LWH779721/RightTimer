@@ -9,14 +9,14 @@ using namespace std;
 
 namespace TimeWalker {
 
-class Timer;
+class TimeWalker;
 class TimerDetector {
 public:
 	static TimerDetector *GetDefaultDetector();
 	
-	bool DetectTimer(std::shared_ptr<Timer> timer);
+	bool DetectTimer(std::shared_ptr<TimeWalker> timer);
 	
-	int RemoveTimer(std::map<int, std::shared_ptr<Timer>>::iterator it);
+	int RemoveTimer(std::map<int, std::shared_ptr<TimeWalker>>::iterator it);
 	
 	bool PauseTimer(int timerfd);
 	
@@ -38,7 +38,7 @@ private:
 private:
 	static TimerDetector *defaultDetector;
 	
-	std::map<int, std::shared_ptr<Timer>> m_timers;
+	std::map<int, std::shared_ptr<TimeWalker>> m_timers;
 	
 	int m_epfd;
 	

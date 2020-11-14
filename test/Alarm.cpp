@@ -9,9 +9,9 @@ using namespace TimeWalker;
 using namespace std;
 
 Alarm::Alarm(string name){
-    m_timer = std::make_shared<RealTimer>(name, true, 0, 0, 0, 0, bind(&Alarm::Run, this));
+    m_schedule = std::make_shared<Schedule>(name, true, 0, 0, 0, 0, bind(&Alarm::Run, this));
 	
-    m_timer->Start("2020-05-27 21:07:30");
+    m_schedule->Start("2020-11-14 10:44:30");
 }
 
 void Alarm::Run(){

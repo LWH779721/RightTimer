@@ -1,7 +1,7 @@
 #ifndef __ALARM_HPP__
 #define __ALARM_HPP__
 
-#include "MonotonicTimer.h"
+#include "Timer.h"
 #include "TimerDetector.h"
 #include "TimeUtil.h"
 
@@ -18,7 +18,7 @@ public:
 	~WifiConnect();
 	
 private:
-	std::shared_ptr<MonotonicTimer> m_timer;
+	std::shared_ptr<Timer> m_timer;
 };
 	
 #endif

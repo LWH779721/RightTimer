@@ -1,19 +1,19 @@
-#ifndef __REALTIMETIMER_HPP__
-#define __REALTIMETIMER_HPP__
+#ifndef __SCHEDULE_H__
+#define __SCHEDULE_H__
 
-#include "Timer.h"
+#include "TimeWalker.h"
 
 namespace TimeWalker {
 
 /**
- * Real Time Timer
+ * Schedule使用现实时间（Real Time）实现，例如：设置早上8点钟闹铃
  **/
-class RealTimer:
-	public Timer,
-    public std::enable_shared_from_this<RealTimer>{
+class Schedule:
+	public TimeWalker,
+    public std::enable_shared_from_this<Schedule>{
 	friend class TimerDetector;
 public:
-	RealTimer(string name, bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback);
+	Schedule(string name, bool absOrRelative, unsigned int delaySec, unsigned int delayNsec, unsigned int intervalSec, unsigned int intervalNsec, function<void()> callback);
 	
 	bool Init() override;
 	
@@ -27,7 +27,7 @@ public:
     
 	bool Stop() override;
 	
-	~RealTimer();
+	~Schedule();
 private:
 	
 };

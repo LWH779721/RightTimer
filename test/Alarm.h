@@ -1,7 +1,7 @@
 #ifndef __ALARM_HPP__
 #define __ALARM_HPP__
 
-#include "RealTimer.h"
+#include "Schedule.h"
 #include "TimerDetector.h"
 
 using namespace TimeWalker;
@@ -15,7 +15,7 @@ public:
 	~Alarm();
 	
 private:
-    std::shared_ptr<RealTimer> m_timer;
+    std::shared_ptr<Schedule> m_schedule;
 };
 	
 #endif
