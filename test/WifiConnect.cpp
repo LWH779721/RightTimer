@@ -8,9 +8,11 @@
 using namespace std;
 
 WifiConnect::WifiConnect(string name){
-	m_timer = std::make_shared<Timer>(name, false, 0, 0, 1, 0, bind(&WifiConnect::Run, this));
+	m_timer = std::make_shared<Timer>(name);
     
-	m_timer->Init();
+	m_timer->setTarget(1, 0);
+	m_timer->setCallback(bind(&WifiConnect::Run, this));
+	
     m_timer->start();
 }
 
@@ -20,7 +22,11 @@ void WifiConnect::Run(){
 	gettimeofday(&tv, NULL);
 
 	cout << "time arvices : sec:" << tv.tv_sec << " nsec: " << tv.tv_usec << endl;
-	m_timer->Start(false, 10, 0, 1, 10*1000, bind(&WifiConnect::Run1, this));
+	
+	m_timer->setTarget(10, 0);
+	m_timer->setInterval(1, 10*1000);
+	m_timer->setCallback(bind(&WifiConnect::Run1, this));
+	m_timer->start();
 }
 
 void WifiConnect::Run1(){
